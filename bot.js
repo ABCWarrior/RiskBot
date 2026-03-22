@@ -219,8 +219,11 @@ async function handle(interaction) {
 
     const owned = ownedBy(data, team);
 
-    if (!owned.includes(regionName) && !isAdjacentToOwned(data, team, regionName))
-      return interaction.reply({ content: `❌ **${regionName}** isn't adjacent to any region **${team}** owns.\nYou own: ${owned.join(', ') || 'none'}`, ephemeral: true });
+    const RE_ENTRY_ZONES = ['PANTHEON', 'ISLANDS'];
+    const isReEntry = RE_ENTRY_ZONES.includes(regionName) && owned.length === 0;
+
+    if (!isReEntry && !owned.includes(regionName) && !isAdjacentToOwned(data, team, regionName))
+      return interaction.reply({ content: `❌ **${regionName}** isn't adjacent to any region **${team}** owns.\nYou own: ${owned.join(', ') || 'none'}\n💡 Teams with no territory can only submit to **PANTHEON** or **ISLANDS**.`, ephemeral: true });
 
     const result = applyPoints(data, team, points, regionName);
     save(data);
